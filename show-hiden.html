@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .father {
+      width: 230px;
+      height: 65px;
+      overflow: hidden;
+      resize: horizontal;
+    }
+
+    .test {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .tag {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: red;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="father">
+    <div class="test">
+      测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试
+      <span class="tag"></span>
+    </div>
+  </div>
+
+  <script>
+    let tag = document.querySelector(".tag");
+    new IntersectionObserver(([change]) => {
+      console.log(change.isIntersecting);
+    }).observe(tag);
+  </script>
+</body>
+
+</html>

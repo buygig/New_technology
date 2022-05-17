@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Utils</title>
+</head>
+
+<body>
+  <!-- <button class="debounce" onclick="debounce(count, 1000)">这是防抖</button> -->
+  <button class="debounce">这是防抖</button>
+  <button class="throttle">这是截流</button>
+
+  <script>
+
+    let debounce_content = document.querySelector(".debounce")
+    let throttle_content = document.querySelector(".throttle")
+
+    let num = 1
+    function count() {
+      num++
+      console.log(num)
+    }
+
+    debounce_content.addEventListener("click", debounce(count, 1000))
+    throttle_content.addEventListener("click", throttle(count, 1000))
+
+    function debounce(func, wait) {
+      let timeout;
+      return function () {
+        const context = this;
+        const args = [...arguments];
+        if (timeout) clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          func.apply(context, args)
+        }, wait);
+      }
+    }
+
+    function throttle(func, wait) {
+      let timeout = null;
+      return function () {
+        const context = this;
+        const args = [...arguments];
+        if (!timeout) {
+          timeout = setTimeout(() => {
+            timeout = null;
+            func.apply(context, args);
+          }, wait)
+        }
+      }
+    }
+
+
+  </script>
+</body>
+
+</html>

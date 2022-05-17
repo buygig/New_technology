@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slider</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .box {
+      width: 500px;
+      height: 250px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slider {
+      width: 90%;
+      height: 100px;
+      display: flex;
+      align-items: center;
+    }
+
+    .slot {
+      width: 100%;
+      height: 20px;
+      background: #eee;
+      border-radius: 20px;
+      display: flex;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shot,
+    .surplus,
+    .loss {
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      flex-shrink: 0;
+      position: absolute;
+    }
+
+    .shot {
+      background: red;
+      z-index: 3;
+    }
+
+    .surplus {
+      background: green;
+      z-index: 1;
+    }
+
+    .loss {
+      background: blue;
+      z-index: 2;
+    }
+
+    .btn {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      flex-shrink: 0;
+      position: absolute;
+      z-index: 4;
+      cursor: pointer;
+    }
+
+    .left {
+      left: 0;
+    }
+
+    .right {
+      right: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div class="slider">
+      <div class="slot">
+        <div class="shot" style="transform: translateX(-430px);"></div>
+        <div class="left btn"></div>
+        <div class="surplus" style="transform: translateX(0px);"></div>
+        <div class="right btn"></div>
+        <div class="loss" style="transform: translateX(430px);"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let left = document.querySelector('.left')
+    let right = document.querySelector('.right')
+    class Drag {
+      constructor(target) {
+        this.startDrag = false;
+        this.pos = []
+        this.save = null
+        this.x = 0;
+        this.target = target
+      }
+
+      eventListen(callback) {
+        let obj = null
+        if (typeof callback === 'function') {
+          obj = callback();
+        } else {
+          console.error("类型错误，请输入函数")
+        }
+        this.target.addEventListener('mousedown', (e) => {
+          this.pos = [e.clientX, e.clientY]
+          this.startDrag = true;
+        });
+        document.addEventListener('mousemove', (e) => {
+          if (!this.startDrag) return;
+          this.x = e.clientX - this.pos[0];
+          let dx = 0;
+          if (this.save) {
+            dx = this.save[0] * 1 + this.x
+          } else {
+            dx = this.x;
+          }
+
+
+          if (obj.pos < 0) {
+            if (dx < 0) {
+              dx = 0
+            }
+            if (dx > Math.abs(obj.pos)) {
+              dx = Math.abs(obj.pos)
+            }
+          } else {
+            if (dx > 0) {
+              dx = 0
+            }
+            if (dx < -obj.pos) {
+              dx = -obj.pos
+            }
+          }
+
+
+
+          this.target.style.transform = `translateX(${dx}px)`;
+          obj.dom.style.transform = `translateX(${obj.pos + dx}px)`;
+
+        });
+        document.addEventListener('mouseup', (e) => {
+          if (this.target.style.transform !== "") {
+            this.save = this.target.style.transform.replace(/[(translateX/()]|[)]|[(px)]/g, "").split(",")
+          }
+          this.startDrag = false;
+        });
+
+      }
+    }
+
+    new Drag(left).eventListen(() => {
+      let dom = document.querySelector('.shot')
+      let pos = Number(dom.style.transform.replace(/[(translateX/()]|[)]|[(px)]/g, ""))
+      return {
+        dom,
+        pos
+      }
+    })
+    new Drag(right).eventListen(() => {
+      let dom = document.querySelector('.loss')
+      let pos = Number(dom.style.transform.replace(/[(translateX/()]|[)]|[(px)]/g, ""))
+      return {
+        dom,
+        pos
+      }
+    })
+  </script>
+</body>
+
+</html>

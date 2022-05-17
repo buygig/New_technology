@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      width: 50px;
+      height: 50px;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box"></div>
+  <script>
+    let box = document.querySelector(".box")
+
+    class Drag {
+      constructor(target) {
+        this.startDrag = false;
+        this.pos = []
+        this.save = null
+        this.x = 0;
+        this.y = 0;
+        this.target = target
+      }
+
+      eventListen() {
+        this.target.addEventListener('mousedown', (e) => {
+          this.pos = [e.clientX, e.clientY]
+          this.startDrag = true;
+        });
+        document.addEventListener('mousemove', (e) => {
+          if (!this.startDrag) return;
+          this.x = e.clientX - this.pos[0];
+          this.y = e.clientY - this.pos[1];
+          if (this.save) {
+            this.target.style.transform = `translate(${this.save[0] * 1 + this.x}px, ${this.save[1] * 1 + this.y}px)`;
+          } else {
+            this.target.style.transform = `translate(${this.x}px, ${this.y}px)`;
+          }
+        });
+        document.addEventListener('mouseup', (e) => {
+          if (this.target.style.transform !== "") {
+            this.save = this.target.style.transform.replace(/[(translate/()]|[)]|[(px)]/g, "").split(",")
+          }
+          this.startDrag = false;
+        });
+      }
+    }
+
+    new Drag(box).eventListen()
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+
+<body>
+	<canvas id="canvas" width="1000" height="1000"></canvas>
+	<script>
+		/** @type {HTMLCanvasElement} */
+		const canvas = document.getElementById('canvas');
+		const ctx = canvas.getContext('2d');
+		const width = 100;
+		const height = 100;
+		drawRect();
+
+		function drawRect(x = 10, y = 10, scale = 1) {
+			ctx.clearRect(0, 0, 1000, 1000);
+			const halfwidth = width * scale / 2;
+			const halfheight = height * scale / 2;
+			ctx.strokeRect(x - halfwidth, y - halfheight, width * scale, height * scale)
+		}
+		let isMove = true;
+		canvas.addEventListener('mousemove', (e) => {
+			if (!isMove) {
+				return
+			}
+			const x = e.clientX;
+			const y = e.clientY;
+			drawRect(x, y)
+		})
+		canvas.addEventListener('click', (e) => {
+			isMove = !isMove;
+		});
+	</script>
+</body>
+
+</html>

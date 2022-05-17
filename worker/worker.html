@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <button>开启计时器</button>
+  <span class="time"></span>
+  <script>
+    document.querySelector('button').addEventListener('click', e => {
+      console.log('开启定时器......');
+      let time = document.querySelector('.time')
+
+      if (window.Worker) {
+        const worker = new Worker('./worker.js');
+        worker.postMessage({ msg: 'User: 你好，我准备开启定时器了', state: true })
+        worker.onmessage = e => {
+          time.innerHTML = e.data.msg
+          console.log(e.data.msg)
+          if (e.data.msg === 10) {
+            worker.terminate();
+          }
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>

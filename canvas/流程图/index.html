@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title></title>
+</head>
+
+<body>
+	<div class="body">
+		<div class="button-group">
+			<button onclick="addNode()">添加节点</button>
+			<button onclick="addArrow()">添加箭头</button>
+		</div>
+		<canvas id="canvas" width="800" height="800"></canvas>
+	</div>
+
+	<script type="text/javascript">
+		const canvas = document.getElementById("canvas")
+		const ctx = canvas.getContext("2d");
+		let nodeArray = [];
+		let arrowArray = [];
+		let dragTag = true;
+		class Node {
+			constructor(position) {
+				this.x = position.x;
+				this.y = position.y;
+			}
+			draw(ctx) {
+				ctx.beginPath();
+				ctx.arc(this.x, this.y, 50, 0, Math.PI * 2, true);
+				ctx.stroke();
+			}
+		}
+
+		class Arrow {
+			constructor(position) {
+				this.fromX = position.fromX;
+				this.fromY = position.fromY;
+				this.toX = position.toX;
+				this.toY = position.toY;
+			}
+			draw(ctx) {
+				ctx.beginPath();
+				ctx.moveTo(this.fromX, this.fromY);
+				ctx.lineTo(this.toX, this.toY);
+				ctx.closePath();
+				ctx.stroke()
+			}
+		}
+
+		function createNode(ctx, pos) {
+			let node = new Node(pos)
+			node.draw(ctx);
+			return node;
+		}
+
+		function createArrow(ctx, pos) {
+			let arrow = new Arrow(pos)
+			arrow.draw(ctx);
+			return arrow;
+		}
+
+		function addNode() {
+			let defaultPos = {
+				x: canvas.width / 2,
+				y: canvas.height / 2
+			}
+			let node = createNode(ctx, defaultPos)
+			nodeArray.push(node)
+			drag(nodeArray)
+		}
+
+		function addArrow() {
+			let arrow;
+			let position = {}
+			let mousedown = true;
+			dragTag = false
+			document.addEventListener('mousedown', (e) => {
+				let node = chooseDragNode(nodeArray, e)
+				position = {
+					fromX: node?.x,
+					fromY: node?.y,
+				}
+			})
+			document.addEventListener('mousemove', (e) => {
+				if (mousedown) {
+					position.toX = positionInCanvas(e).x;
+					position.toY = positionInCanvas(e).y;
+					ctx.clearRect(0, 0, canvas.width, canvas.height)
+					createArrow(ctx, position)
+					arrowArray.forEach(item => {
+						item.draw(ctx)
+					})
+					nodeArray.forEach(item => {
+						item.draw(ctx)
+					});
+				}
+			})
+			document.addEventListener('mouseup', (e) => {
+				if (mousedown) {
+					let node = chooseDragNode(nodeArray, e)
+					if (node) {
+						position.toX = node.x;
+						position.toY = node.y;
+						ctx.clearRect(0, 0, canvas.width, canvas.height)
+						let arrow = createArrow(ctx, position)
+						arrowArray.push(arrow)
+					}
+					arrowArray.forEach(item => {
+						item.draw(ctx)
+					})
+					nodeArray.forEach(item => {
+						item.draw(ctx)
+					});
+				}
+
+				mousedown = false
+				dragTag = true
+			})
+		}
+
+		// 获取鼠标的坐标
+		function positionInCanvas(e) {
+			return {
+				x: e.clientX - canvas.getBoundingClientRect().left,
+				y: e.clientY - canvas.getBoundingClientRect().top
+			}
+		}
+
+		// 选择拖动的节点
+		function chooseDragNode(array, e) {
+			for (let item of array) {
+				item.draw(ctx)
+				if (ctx.isPointInPath(positionInCanvas(e).x, positionInCanvas(e).y)) {
+					return item;
+				}
+			}
+		}
+
+		// 选择变化的箭头
+		function chooseArrow(node, arrow) {
+			let arrowPos = {
+				from: [],
+				to: []
+			}
+			console.log(node, 9999)
+			for (let elem of arrow) {
+				if (Math.abs(elem.fromX - node.x) <= 50 && Math.abs(elem.fromY - node.y) <= 50) {
+					arrowPos.from.push(elem)
+				}
+				if (Math.abs(elem.toX - node.x) <= 50 && Math.abs(elem.toY - node.y) <= 50) {
+					arrowPos.to.push(elem)
+				}
+
+			}
+			console.log(arrowPos, 9999)
+
+			return arrowPos
+		}
+
+		function drag(nodeArray) {
+			let oldx, oldy, savex, savey, dragNode;
+			canvas.addEventListener('mousedown', (e) => {
+				oldx = positionInCanvas(e).x;
+				oldy = positionInCanvas(e).y;
+				dragNode = chooseDragNode(nodeArray, e);
+				savex = dragNode?.x;
+				savey = dragNode?.y;
+			})
+			document.addEventListener('mousemove', (e) => {
+				let newOption = {
+					x: savex + positionInCanvas(e).x - oldx,
+					y: savey + positionInCanvas(e).y - oldy
+				}
+				if (dragTag && dragNode) {
+					dragNode.x = newOption.x;
+					dragNode.y = newOption.y;
+					let changArrow = chooseArrow(dragNode, arrowArray);
+					if (changArrow) {
+						changArrow.from.forEach(item => {
+							item.fromX = dragNode.x;
+							item.fromY = dragNode.y;
+						})
+						changArrow.to.forEach(item => {
+							item.toX = dragNode.x;
+							item.toY = dragNode.y;
+						})
+
+					}
+					ctx.clearRect(0, 0, canvas.width, canvas.height)
+					nodeArray.forEach(item => {
+						item.draw(ctx)
+					});
+					arrowArray.forEach(item => {
+						item.draw(ctx)
+					})
+				}
+			})
+			canvas.addEventListener('mouseup', (e) => {
+				// dragTag = false;
+				savex = dragNode?.x;
+				savey = dragNode?.y;
+				dragNode = null
+			})
+		}
+	</script>
+</body>
+
+</html>

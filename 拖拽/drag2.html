@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .father {
+      width: 100px;
+      height: 320px;
+      padding: 5px;
+      border: 1px solid black;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .box {
+      box-sizing: border-box;
+      width: 100px;
+      height: 50px;
+      border: 1px solid black;
+      position: relative;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="father">
+  </div>
+
+  <script>
+    let father = document.querySelector(".father")
+    let arr = [1, 2, 3, 4, 5, 6]
+    let html = ''
+    arr.forEach(item => {
+      html += `<div class="box">${item}</div>`
+    })
+    father.innerHTML = html
+    let box = document.getElementsByClassName("box")
+    let nodes = []
+
+    class Drag {
+      constructor(list, target) {
+        this.startDrag = false;
+        this.pos = []
+        this.x = 0;
+        this.y = 0;
+        this.dx = 0;
+        this.dy = 0;
+        this.index = 0
+        this.saveIndex = 0
+        this.target = target;
+        this.list = list;
+        this.move = false;
+        this.up = false;
+        this.dowm = false;
+      }
+
+      eventListen() {
+        this.target.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          this.index = [...this.list].findIndex(item => item == this.target)
+          this.saveIndex = this.index
+          this.target.style['z-index'] = 1
+          for (let i = 0; i < this.list.length; i++) {
+            this.list[i].style.transition = 'all 0.3s'
+          }
+          this.target.style.transition = 'none'
+          this.pos = [e.clientX, e.clientY]
+          this.startDrag = true;
+        });
+        document.addEventListener('mousemove', (e) => {
+          if (!this.startDrag) {
+            return;
+          } else {
+            this.move = true
+            this.x = e.clientX - this.pos[0];
+            this.y = e.clientY - this.pos[1];
+            this.target.style.transform = `translate(${this.x}px, ${this.y}px)`;
+            this.dy = Math.round(this.y / 50) + this.index
+            if (this.dy > this.list.length - 1) {
+              this.dy = this.list.length - 1
+            }
+            if (this.dy < 0) {
+              this.dy = 0
+            }
+            if (this.dy > this.saveIndex) {
+              if (this.saveIndex === this.index)
+                this.up = false
+              if (!this.up)
+                this.down = true;
+              for (let i = this.dy; i > this.saveIndex; i--) {
+                if (this.up) {
+                  if (i === this.index) {
+                    this.list[i - 1].style.transform = `translate(0, 0px)`
+                  } else {
+                    this.list[i - 1].style.transform = `translate(0, ${(this.saveIndex - this.dy + 1) * 50}px)`
+                  }
+                } else {
+                  this.list[i].style.transform = `translate(0, ${(this.saveIndex - this.dy) * 50}px)`
+                }
+              }
+              this.saveIndex = this.dy
+            }
+
+            if (this.dy < this.saveIndex) {
+              if (this.saveIndex === this.index)
+                this.down = false
+              if (!this.down)
+                this.up = true;
+
+              for (let i = this.dy; i < this.saveIndex; i++) {
+                if (this.down) {
+                  if (i === this.index) {
+                    this.list[i + 1].style.transform = `translate(0, 0px)`
+                  } else {
+                    this.list[i + 1].style.transform = `translate(0, ${(this.saveIndex - this.dy - 1) * 50}px)`
+                  }
+                } else {
+                  this.list[i].style.transform = `translate(0, ${(this.saveIndex - this.dy) * 50}px)`
+                }
+
+              }
+              this.saveIndex = this.dy
+            }
+          }
+        });
+
+        this.target.addEventListener('mouseup', (e) => {
+          this.startDrag = false;
+          if (!this.move) return
+          this.move = false
+          this.up = false
+          this.down = false
+          this.target.style['z-index'] = 0
+          if (this.dy > this.index) {
+            father.insertBefore(this.list[this.index], this.list[this.dy + 1])
+          }
+          if (this.dy < this.index) {
+            father.insertBefore(this.list[this.index], this.list[this.dy])
+          }
+          this.list = document.getElementsByClassName("box")
+          for (let i = 0; i < this.list.length; i++) {
+            this.list[i].style.transition = 'none'
+            this.list[i].style.transform = `translate(0, 0)`
+          }
+        });
+      }
+    }
+
+    for (let i = 0; i < box.length; i++) {
+      box[i].style.background = '#' + ('00000' + (Math.random() * 0x1000000 << 0).toString(16)).substr(-6);
+      let drag = new Drag(box, box[i])
+      drag.eventListen()
+    }
+
+  </script>
+</body>
+
+</html>

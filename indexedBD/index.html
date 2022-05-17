@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+
+<body>
+
+	<button id="addBtn" onclick="addData()">添加数据</button>
+
+	<script>
+		const customerData = [
+			{ ssn: "444-44-4444", name: "Bill", age: 35, email: "bill@company.com" },
+			{ ssn: "555-55-5555", name: "Donna", age: 32, email: "donna@home.org" }
+		];
+
+
+		class myDB {
+			constructor() {
+				this.db = null;
+				this.dbName = "the_name";
+				this.version = 1;
+			}
+			init() {
+				return new Promise((resolve, reject) => {
+					let that = this;
+					let request = indexedDB.open(this.dbName, this.version);
+
+					request.onsuccess = () => {
+						that.db = request.result;
+						resolve()
+					}
+
+					request.onupgradeneeded = event => {
+						that.db = event.target.result;
+
+						var customers = that.db.createObjectStore("customers", { keyPath: "ssn" });
+						var test = that.db.createObjectStore("test");
+
+						customers.createIndex("name", "name", { unique: false });
+
+						customers.createIndex("email", "email", { unique: true });
+
+						customers.transaction.oncomplete = event => {
+							var customerObjectStore = that.db.transaction("customers", "readwrite").objectStore("customers");
+							customerData.forEach(customer => {
+								customerObjectStore.add(customer);
+							});
+						};
+					};
+
+					request.onerror = err => {
+						reject(err)
+					};
+				})
+			}
+
+			add(store, data) {
+				return new Promise((resolve, reject) => {
+					let request = this.db.transaction([store], "readwrite").objectStore(store).add(data);
+					request.onsuccess = e => {
+						resolve(e.target.result)
+					}
+
+					request.onerror = err => {
+						reject(err)
+					}
+
+				})
+			}
+		}
+
+
+		let db = new myDB()
+
+
+		function addData() {
+			db.init().then((res) => {
+				db.add('customers',
+					{ ssn: "555-55-5555", name: "jzy", age: 25, email: "1271639879@qq.com" }
+				)
+			})
+		}
+
+
+
+
+		// let addData = document.querySelector("#addBtn");
+		// addData.addEventListener('click', e => {
+		// 	console.log(db)
+		// 	add(db, dbName,
+		// 		{ ssn: "555-55-5555", name: "jzy", age: 25, email: "1271639879@qq.com" }
+		// 	)
+		// })
+
+		// function add(db, store, data) {
+		// 	let request = db
+		// 		.transaction([store], 'readwrite')
+		// 		.customers(store)
+		// 		.add(data);
+
+		// 	request.onsuccess = event => {
+		// 		console.log('数据写入失败！')
+		// 	}
+
+		// 	request.onerror = err => {
+		// 		console.log('数据写入失败！')
+		// 	}
+		// }
+
+	</script>
+</body>
+
+</html>

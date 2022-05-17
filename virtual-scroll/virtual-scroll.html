@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>virtual-scroll</title>
+  <style>
+    .father {
+      width: 500px;
+      height: 500px;
+      border: 1px solid black;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      overflow: auto;
+    }
+
+    .son {
+      height: 80px;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="father">
+    <div class="scroll">
+    </div>
+  </div>
+
+  <script>
+    let data = []
+    for (let i = 1; i < 100001; i++) {
+      data.push(`测试${i}`)
+    }
+    let startIndex = 0, endIndex = 11;
+    let viewData = data.slice(startIndex, endIndex)
+    let scrollDirection // 滚动方向
+    let down = false
+    let father = document.querySelector('.father')
+    let scroll = document.querySelector('.scroll')
+    let height = 0;
+    let html = "";
+    for (let i = 0; i < viewData.length; i++) {
+      html += `<div class="son">${viewData[i]}</div>`
+    }
+    scroll.innerHTML = html
+    scroll.style.height = data.length * 80 + 'px'
+
+    // 滚轮滚动触发
+    // 计算高度
+    const itemHeight = new ResizeObserver(entries => {
+      entries.forEach(item => {
+        if (scrollDirection === 'up') {
+          height -= item.contentRect.height
+        } else if (scrollDirection === 'down') {
+          height += item.contentRect.height
+        }
+      });
+      scroll.style.transform = `translateY(${height}px)`
+      scroll.style.height = data.length * 80 - height + 'px'
+    });
+
+    const scrollDown = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        if (endIndex < data.length) {
+          scrollDirection = "down"
+          startIndex++; endIndex++;
+          viewData = data.slice(startIndex, endIndex)
+          html = "";
+          for (let i = 0; i < viewData.length; i++) {
+            html += `<div class="son">${viewData[i]}</div>`
+          }
+          scroll.innerHTML = html
+          son = document.querySelectorAll('.son')
+          scrollUp.observe(son[0])
+          scrollDown.observe(son[son.length - 1])
+          itemHeight.observe(son[son.length - 1])
+        }
+      }
+    });
+
+    const scrollUp = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        if (startIndex > 0) {
+          scrollDirection = "up"
+          startIndex--; endIndex--;
+          viewData = data.slice(startIndex, endIndex)
+          html = "";
+          for (let i = 0; i < viewData.length; i++) {
+            html += `<div class="son">${viewData[i]}</div>`
+          }
+          scroll.innerHTML = html
+          son = document.querySelectorAll('.son')
+          scrollUp.observe(son[0])
+          scrollDown.observe(son[son.length - 1])
+          itemHeight.observe(son[0]);
+        }
+      }
+    })
+
+    let son = document.querySelectorAll('.son')
+    scrollDown.observe(son[son.length - 1])
+
+    // 拖动滚动条触发
+    father.addEventListener("mousedown", e => {
+      down = true
+    })
+
+    father.addEventListener("mouseup", () => {
+      down = false
+      let son = document.querySelectorAll('.son')
+      scrollUp.observe(son[0])
+      scrollDown.observe(son[son.length - 1])
+    })
+
+
+    father.addEventListener("scroll", e => {
+      if (down) {
+        startIndex = Math.floor(father.scrollTop / 80);
+        endIndex = startIndex + 11;
+        viewData = data.slice(startIndex, endIndex)
+        html = "";
+        for (let i = 0; i < viewData.length; i++) {
+          html += `<div class="son">${viewData[i]}</div>`
+        }
+        scroll.innerHTML = html
+        height = startIndex * 80
+        scroll.style.transform = `translateY(${height}px)`
+        scroll.style.height = data.length * 80 - height + 'px'
+      }
+    })
+
+  </script>
+</body>
+
+</html>
