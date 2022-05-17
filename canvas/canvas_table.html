@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let drawCtx;
+    const width = window.innerWidth
+    const height = window.innerHeight
+
+    function init() {
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      document.body.appendChild(canvas);
+      drawCtx = canvas.getContext("2d")
+    }
+
+    function drawTable() {
+      // 绘制之前清空下画布
+      drawCtx.clearRect(0, 0, width, height)
+      // 单元格的宽高
+      const cellHeight = 22
+      const cellWidth = 120
+
+      drawCtx.strokeStyle = "#dcdcdc";
+      drawCtx.lineWidth = 1;
+      drawCtx.translate(-0.5, -0.5)
+      drawCtx.beginPath()
+      // 划竖线
+      for (let i = 0; i < width; i = i + cellWidth) {
+        drawCtx.moveTo(i, 0)
+        drawCtx.lineTo(i, height)
+        drawCtx.stroke()
+      }
+      // 划横线 
+      for (let j = 0; j < height; j = j + cellHeight) {
+        drawCtx.moveTo(0, j)
+        drawCtx.lineTo(width, j)
+      }
+      drawCtx.stroke()
+      drawCtx.translate(0.5, 0.5)
+    }
+    init();
+    // const s=Date.now(); 
+    // for (let i=0; i< 100000; i++) { 
+    drawTable();
+    // } 
+    // console.log(Date.now() - s) 
+  </script>
+</body>
+
+</html>

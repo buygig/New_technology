@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>virtual-scroll</title>
+  <style>
+    .father {
+      width: 500px;
+      height: 500px;
+      outline: 1px solid black;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .son {
+      height: 80px;
+      width: 100%;
+      outline: 1px solid black;
+    }
+
+    .scroll-bar {
+      position: absolute;
+      width: 12px;
+      height: 100%;
+      top: 0;
+      right: 0;
+      background: #e3e3e3;
+      border-radius: 5px;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .scroll-bar-slider {
+      position: relative;
+      width: 6px;
+      height: 30px;
+      margin: 0 auto;
+      background: #333;
+      border-radius: 5px;
+    }
+
+    .scroll-bar-slider:hover {
+      background: #111;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="father">
+    <div class="scroll" style="transform: translateY(0px)"></div>
+    <div class="scroll-bar">
+      <div class="scroll-bar-slider" style="transform: translateY(0px)"></div>
+    </div>
+  </div>
+
+  <script>
+    let data = []
+    for (let i = 1; i < 51; i++) {
+      data.push(`测试${i}`)
+    }
+    let startIndex = 0,
+      endIndex = 10;
+    let viewData = data.slice(startIndex, endIndex);
+    let father = document.querySelector('.father');
+    let scroll = document.querySelector('.scroll');
+    let html = "";
+    for (let i = 0; i < viewData.length; i++) {
+      html += `<div class="son" style="top: ${i * 80}px">${viewData[i]}</div>`
+    }
+    scroll.innerHTML = html;
+
+    class ScrollBar {
+      constructor(view, container) {
+        this.scrollBar = document.querySelector('.scroll-bar');
+        this.slider = document.querySelector('.scroll-bar-slider');
+
+        this.save_current_container_height = 0;
+        this.save_current_slider_height = 0;
+
+        this.useDrag = false;
+
+        this.view = view;
+        this.container = container
+      }
+
+      init() {
+        let sliderRatio = this.view.getBoundingClientRect().height /
+          this.container.getBoundingClientRect().height;
+        this.wheel(sliderRatio);
+        this.drag(sliderRatio);
+        this.style();
+      }
+
+      wheel(ratio) {
+        let offset = 0;
+        let sliderOffset = 0;
+        let sliderHeight = ratio * this.view.getBoundingClientRect().height;
+        let scrollRange = this.container.getBoundingClientRect().height - this.view.getBoundingClientRect().height;
+        this.slider.style.height = `${sliderHeight}px`;
+        this.view.addEventListener('wheel', e => {
+
+          if (this.useDrag) {
+            offset = 0;
+            this.useDrag = false;
+          }
+
+          offset += e.deltaY;
+          if (offset < this.save_current_container_height) {
+            offset = this.save_current_container_height
+          }
+
+          if (offset > scrollRange + this.save_current_container_height) {
+            offset = this.save_current_container_height +
+              scrollRange;
+          }
+
+          sliderOffset = offset * ratio;
+          this.container.style.transform = `translateY(${-offset + this.save_current_container_height}px)`;
+          this.slider.style.transform = `translateY(${sliderOffset + this.save_current_slider_height}px)`;
+        })
+      }
+
+      drag(ratio) {
+        let drag = false;
+        let clickPos = null;
+        let offset = 0;
+        let scrollRange = (this.container.getBoundingClientRect().height - this.view.getBoundingClientRect().height) *
+          ratio;
+
+        this.slider.addEventListener('mousedown', e => {
+          e.preventDefault();
+          drag = true;
+          this.useDrag = true
+          clickPos = e.y;
+          this.save_current_container_height = this.get_pos(this.container);
+          this.save_current_slider_height = this.get_pos(this.slider);
+        })
+
+        document.addEventListener('mousemove', e => {
+          if (drag) {
+            this.scrollBar.style.visibility = "visible";
+            offset = clickPos - e.y;
+
+
+            if (offset > this.save_current_slider_height) {
+              offset = this.save_current_slider_height
+            }
+
+            if (offset < this.save_current_slider_height - scrollRange) {
+              offset = this.save_current_slider_height - scrollRange;
+            }
+
+            this.container.style.transform =
+              `translateY(${offset / ratio + this.save_current_container_height}px)`;
+            this.slider.style.transform = `translateY(${-offset + this.save_current_slider_height}px)`;
+          }
+        })
+
+        document.addEventListener('mouseup', e => {
+          drag = false;
+          this.save_current_container_height = this.get_pos(this.container);
+          this.save_current_slider_height = this.get_pos(this.slider);
+        })
+      }
+
+      get_pos(target) {
+        let pos = target.style.transform.replace(/[(translateY/()]|[)]|[(px)]/g, "") * 1;
+        return pos
+      }
+
+      style() {
+        this.view.addEventListener('mouseenter', e => {
+          this.scrollBar.style.visibility = "visible"
+        })
+
+        this.view.addEventListener('mouseleave', e => {
+          this.scrollBar.style.visibility = "hidden"
+        })
+      }
+    }
+
+
+
+
+    let scrollBar = new ScrollBar(father, scroll)
+    scrollBar.init()
+  </script>
+</body>
+
+</html>
