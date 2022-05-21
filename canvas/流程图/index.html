@@ -20,16 +20,41 @@
 		const ctx = canvas.getContext("2d");
 		let nodeArray = [];
 		let arrowArray = [];
-		let dragTag = true;
 		class Node {
-			constructor(position) {
-				this.x = position.x;
-				this.y = position.y;
+			constructor(pos) {
+				this.pos = [pos.x, pos.y];
+
+
+				this.startPos = [0, 0];
+				this.dPos = [0, 0];
+				this.savePos = [pos.x, pos.y]
 			}
 			draw(ctx) {
 				ctx.beginPath();
-				ctx.arc(this.x, this.y, 50, 0, Math.PI * 2, true);
+				ctx.arc(this.pos[0], this.pos[1], 50, 0, Math.PI * 2, true);
 				ctx.stroke();
+			}
+			drag() {
+				let drag = false
+				canvas.addEventListener('mousedown', (e) => {
+					this.startPos = [e.offsetX, e.offsetY];
+					drag = true;
+				})
+				document.addEventListener('mousemove', (e) => {
+					if (!drag) return
+					this.dPos = [e.offsetX - this.startPos[0], e.offsetY - this.startPos[1]]
+					this.pos[0] = this.savePos[0] + this.dPos[0];
+					this.pos[1] = this.savePos[1] + this.dPos[1];
+					ctx.clearRect(0, 0, canvas.width, canvas.height)
+					nodeArray.forEach(item => {
+						item.draw(ctx)
+					});
+
+				})
+				canvas.addEventListener('mouseup', (e) => {
+					this.savePos = [this.pos[0], this.pos[1]];
+					drag = false;
+				})
 			}
 		}
 
@@ -52,6 +77,7 @@
 		function createNode(ctx, pos) {
 			let node = new Node(pos)
 			node.draw(ctx);
+			node.drag()
 			return node;
 		}
 
@@ -68,7 +94,7 @@
 			}
 			let node = createNode(ctx, defaultPos)
 			nodeArray.push(node)
-			drag(nodeArray)
+			// drag(nodeArray)
 		}
 
 		function addArrow() {
@@ -85,8 +111,8 @@
 			})
 			document.addEventListener('mousemove', (e) => {
 				if (mousedown) {
-					position.toX = positionInCanvas(e).x;
-					position.toY = positionInCanvas(e).y;
+					position.toX = getPos(e).x;
+					position.toY = getPos(e).y;
 					ctx.clearRect(0, 0, canvas.width, canvas.height)
 					createArrow(ctx, position)
 					arrowArray.forEach(item => {
@@ -131,8 +157,8 @@
 		// 选择拖动的节点
 		function chooseDragNode(array, e) {
 			for (let item of array) {
-				item.draw(ctx)
-				if (ctx.isPointInPath(positionInCanvas(e).x, positionInCanvas(e).y)) {
+				item.draw(ctx);
+				if (ctx.isPointInPath(getPos(e).x, getPos(e).y)) {
 					return item;
 				}
 			}
@@ -144,7 +170,6 @@
 				from: [],
 				to: []
 			}
-			console.log(node, 9999)
 			for (let elem of arrow) {
 				if (Math.abs(elem.fromX - node.x) <= 50 && Math.abs(elem.fromY - node.y) <= 50) {
 					arrowPos.from.push(elem)
@@ -152,26 +177,23 @@
 				if (Math.abs(elem.toX - node.x) <= 50 && Math.abs(elem.toY - node.y) <= 50) {
 					arrowPos.to.push(elem)
 				}
-
 			}
-			console.log(arrowPos, 9999)
-
 			return arrowPos
 		}
 
 		function drag(nodeArray) {
-			let oldx, oldy, savex, savey, dragNode;
+			let oldX, oldY, saveX, saveY, dragNode;
 			canvas.addEventListener('mousedown', (e) => {
-				oldx = positionInCanvas(e).x;
-				oldy = positionInCanvas(e).y;
+				oldX = getPos(e).x;
+				oldY = getPos(e).y;
 				dragNode = chooseDragNode(nodeArray, e);
-				savex = dragNode?.x;
-				savey = dragNode?.y;
+				saveX = dragNode?.x;
+				saveY = dragNode?.y;
 			})
 			document.addEventListener('mousemove', (e) => {
 				let newOption = {
-					x: savex + positionInCanvas(e).x - oldx,
-					y: savey + positionInCanvas(e).y - oldy
+					x: saveX + getPos(e).x - oldX,
+					y: saveY + getPos(e).y - oldY
 				}
 				if (dragTag && dragNode) {
 					dragNode.x = newOption.x;
@@ -199,8 +221,8 @@
 			})
 			canvas.addEventListener('mouseup', (e) => {
 				// dragTag = false;
-				savex = dragNode?.x;
-				savey = dragNode?.y;
+				saveX = dragNode?.x;
+				saveY = dragNode?.y;
 				dragNode = null
 			})
 		}

@@ -38,11 +38,6 @@
       }
     }
 
-
-
-
-
-
     let father = document.querySelector(".father")
     let arr = [1, 2, 3, 4, 5, 6]
     let html = ''
@@ -55,7 +50,7 @@
     let nodes = []
 
     class Drag {
-      constructor(list, target) {
+      constructor(container, list, target) {
         this.startDrag = false;
         this.pos = []
         this.x = 0;
@@ -66,6 +61,7 @@
         this.saveIndex = 0
         this.target = target;
         this.list = list;
+        this.container = container;
         this.move = false;
         this.up = false;
         this.dowm = false;
@@ -149,23 +145,24 @@
           this.down = false
           this.target.style['z-index'] = 0
           if (this.dy > this.index) {
-            father.insertBefore(this.list[this.index], this.list[this.dy + 1])
+            this.container.insertBefore(this.list[this.index], this.list[this.dy + 1])
           }
           if (this.dy < this.index) {
-            father.insertBefore(this.list[this.index], this.list[this.dy])
+            this.container.insertBefore(this.list[this.index], this.list[this.dy])
           }
-          this.list = document.getElementsByClassName("box")
+
           for (let i = 0; i < this.list.length; i++) {
             this.list[i].style.transition = 'none'
             this.list[i].style.transform = `translate(0, 0)`
           }
+
         });
       }
     }
 
     for (let i = 0; i < box.length; i++) {
       box[i].style.background = '#' + ('00000' + (Math.random() * 0x1000000 << 0).toString(16)).substr(-6);
-      let drag = new Drag(box, box[i])
+      let drag = new Drag(father, box, box[i])
       drag.eventListen()
     }
   </script>
