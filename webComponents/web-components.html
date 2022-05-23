@@ -10,7 +10,15 @@
 <body>
   <div class="demo">
     <p is='p-filter'>密码：123456789</p>
+
+    <b-button>
+      hello world
+    </b-button>
+
+    <b-counter></b-counter>
   </div>
+
+  <script type="module" src="./button/button.js"></script>
 
   <script>
     class PFilter extends HTMLParagraphElement {
@@ -21,8 +29,9 @@
       }
     }
 
-    customElements.define("p-filter", PFilter, { extends: 'p' })
-
+    customElements.define("p-filter", PFilter, {
+      extends: 'p'
+    })
   </script>
 </body>
 

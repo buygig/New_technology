@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    body {
+      background: #f1f0f1;
+    }
+
+    .box {
+      width: 150px;
+      height: 200px;
+      margin-bottom: 50px;
+      border-radius: 10px;
+    }
+
+    .shadow {
+      background: #fff;
+      box-shadow: 0px 12px 24px rgb(0 0 0 / 8%);
+    }
+
+    .shadow2 {
+      background: #ffa21a;
+      box-shadow:
+        0px 12px 24px rgb(255 162 26 / 40%),
+        0px 0px 48px rgb(255 162 26 / 24%);
+    }
+
+
+
+    .shadow3 {
+      background: #48A1F8;
+
+      filter: drop-shadow(0px 12px 24px rgb(72 161 248));
+
+      /* box-shadow:
+        0px 12px 24px rgb(72 161 248 / 50%),
+        0px 0px 48px rgb(72 161 248 / 30%); */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box shadow"></div>
+  <div class="box shadow2"></div>
+  <div class="box shadow3"></div>
+
+</body>
+
+</html>
