@@ -13,9 +13,6 @@ start.addEventListener('click', () => {
       start.disabled = true;
       video.srcObject = stream;
       window.stream = stream;
-
-      console.log(stream.getTracks())
-
       stream.getVideoTracks()[0].addEventListener('ended', () => {
         showMsg('用户停止分享屏幕')
         start.disabled = false;
