@@ -48,7 +48,7 @@ function getSupportedMimeTypes() {
 }
 
 function startRecording() {
-  recordBlobs = [];
+  recordedBlobs = [];
   const mimeType = getSupportedMimeTypes();
   const options = { mimeType: mimeType[2] };
   try {
