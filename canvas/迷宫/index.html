@@ -196,16 +196,17 @@
 
 
 
+        for (let i = 0; i < path.length; i++) {
 
-        path.forEach((el, index) => {
-          let endX = (el % this.columns + 0.5) * cellWidth;
-          let endY = ((el / this.rows >> 0) + 0.5) * cellHeight;
-          let startX = (path[index + 1] % this.columns + 0.5) * cellWidth;
-          let startY = ((path[index + 1] / this.rows >> 0) + 0.5) * cellHeight;
-          let tag = amimation(startX, startY, endX, endY);
-          console.log(tag)
-        })
+          let startX = (path[i] % this.columns + 0.5) * cellWidth;
+          let startY = ((path[i] / this.rows >> 0) + 0.5) * cellHeight;
+          let endX = (path[i + 1] % this.columns + 0.5) * cellWidth;
+          let endY = ((path[i + 1] / this.rows >> 0) + 0.5) * cellHeight;
 
+          setTimeout(() => {
+            amimation(startX, startY, endX, endY);
+          }, i * 50)
+        }
 
         function amimation(startX, startY, endX, endY) {
           let tag = false;
@@ -213,7 +214,7 @@
           prevX = startX;
           prevY = startY;
           let startTime;
-          const duration = 1000;
+          const duration = 50;
           const step = (currentTime) => {
             !startTime && (startTime = currentTime);
             const timeElapsed = currentTime - startTime;
@@ -229,13 +230,10 @@
             draw();
             if (progress < 1) {
               requestAnimationFrame(step);
-            } else {
-              console.log('动画执行完毕')
-              tag = true;
             }
           }
           requestAnimationFrame(step)
-          return tag
+
         }
       }
     }
