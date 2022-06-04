@@ -1,6 +1,6 @@
 const video = document.getElementById("video");
 const start = () => {
-  navigator.mediaDevices.getDisplayMedia({
+  navigator.mediaDevices.getUserMedia({
     video: true
   }).then(
     stream => {
@@ -23,6 +23,8 @@ video.addEventListener('play', () => {
 
   const canvas = faceapi.createCanvasFromMedia(video);
   const ctx = canvas.getContext('2d');
+  canvas.width = video.width;
+  canvas.height = video.height;
   document.body.append(canvas);
 
   const displaySize = {
@@ -38,6 +40,8 @@ video.addEventListener('play', () => {
 
     const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
+
+    console.log(resizedDetections)
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     faceapi.draw.drawDetections(canvas, resizedDetections)

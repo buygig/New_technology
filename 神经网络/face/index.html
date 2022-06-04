@@ -7,11 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <style>
-    video {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     canvas {
@@ -21,7 +24,7 @@
 </head>
 
 <body>
-  <video id="video" width="1280" height="720" playsinline autoplay muted></video>
+  <video id="video" width="720" height="560" playsinline autoplay muted></video>
 
 
   <script src="./face-api.min.js"></script>

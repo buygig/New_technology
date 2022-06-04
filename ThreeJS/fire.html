@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="js/three.js"></script>
+  <script src="js/GLTFLoder.js"></script>
+  <script src="js/OrbitControls.js"></script>
+
+  <script>
+    const init = () => {
+      // 场景
+      const scene = new THREE.Scene();
+
+      // 渲染器
+      const renderer = new THREE.WebGLRenderer({
+        antialias: true
+      })
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // 镜头
+      const aspect = window.innerWidth / window.innerHeight;
+      const camera = new THREE.PerspectiveCamera(100, aspect, 0.01, 5000);
+      camera.position.set(1, 0.8, 1.2);
+
+      // 镜头控制
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.update();
+
+      // 灯光
+      const light = new THREE.AmbientLight(0x404040, 20);
+      scene.add(light);
+
+      // 加载器
+      const loader = new THREE.GLTFLoader();
+      loader.load("model/scene.gltf", res => {
+        scene.add(res.scene);
+        animate();
+      })
+
+      const animate = () => {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera)
+      };
+    }
+    init();
+  </script>
+</body>
+
+</html>

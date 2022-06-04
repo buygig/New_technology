@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script src="js/three.js"></script>
+  <script>
+    class chinaMap {
+      constructor() {
+        this.init()
+      }
+
+      init() {
+        this.scene = new THREE.Scene()
+        this.setCamera()
+        this.setRenderer()
+      }
+
+      setCamera() {
+        this.camera = new THREE.PerspectiveCamera(75, window.innerwidth / window.innerHeight, 0.1, 1000)
+      }
+
+      setRenderer() {
+        this.renderer = new THREE.WebGLRenderer();
+        this.renderer.setSize(window.innerHeight, window.innerWidth)
+        document.body.appendChild(this.renderer.domElement)
+      }
+
+      setLight() {
+        this.ambientLight = new THREE.AmbientLight(0xffffff)
+        this.scene.add(ambientLight)
+      }
+    }
+
+
+  </script>
+</body>
+
+</html>
