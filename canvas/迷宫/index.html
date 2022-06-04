@@ -238,10 +238,10 @@
       }
     }
 
-    let canvas = document.querySelector("#canvas")
+    const canvas = document.querySelector("#canvas")
     const column = 50,
       row = 50;
-    let maze = new Maze(column, row, canvas);
+    const maze = new Maze(column, row, canvas);
 
     console.time("generate maze");
     maze.generate();
