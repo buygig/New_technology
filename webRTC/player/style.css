@@ -1,0 +1,116 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #ffeff5;
+}
+
+.container {
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 430px;
+  height: 100px;
+  background: #fff;
+  border-radius: 14px;
+
+  box-shadow: 0 40px 57px rgba(111, 83, 91, 0.6);
+}
+
+.record {
+  position: relative;
+  transform: translate(30%, -20%);
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background: url("./music/RADIANT.jpg") center repeat;
+  background-size: cover;
+
+  animation: turn;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+}
+
+@keyframes turn {
+  0% {
+    transform: translate(30%, -20%) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(30%, -20%) rotate(360deg);
+  }
+}
+
+.record::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 25px;
+  height: 25px;
+  background: #fff;
+  border-radius: 50%;
+}
+
+.control {
+  width: 250px;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  margin-right: 15px;
+}
+
+.btn {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  color: #DEE0E4;
+}
+
+.btn:nth-of-type(2) {
+  color: #C7CAD1;
+}
+
+.btn:hover {
+  background: #DEE0E4;
+  border-radius: 10px;
+  color: #fff;
+}
+
+.msg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 398px;
+  height: 74px;
+  border-radius: 14px;
+  background: #FFF8FA;
+  transition: all 1s;
+}
+
+.up {
+  transform: translate(-50%, -160%);
+}
+
+
+
+
+/* .down {
+  transform: translate(-50%, -50%);
+} */
