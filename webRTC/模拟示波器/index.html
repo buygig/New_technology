@@ -62,8 +62,8 @@
     srcInputForm.id = 'srcInputForm';
     var srcInput = document.createElement('input');
     srcInput.id = 'srcInput';
-    // srcInput.value = 'https://oss2.humphreyj.com/media/music/oscillofun/oscillofun-wave.flac';
-    srcInput.value = 'RADIANT.mp3';
+    srcInput.value = 'https://oss2.humphreyj.com/media/music/oscillofun/oscillofun-wave.flac';
+    // srcInput.value = 'RADIANT.mp3';
     srcInputForm.appendChild(srcInput);
     document.body.appendChild(srcInputForm);
 
@@ -86,8 +86,8 @@
 
     function init() {
       if (!audioContext) {
-        // document.body.appendChild(oscilloscopeCanvas = new oscilloscopeCanvas(audioContext = getAudioContext(media, ['source'])));
-        document.body.appendChild(oscilloscopeSvg = new oscilloscopeSvg(audioContext = getAudioContext(media, ['source'])));
+        document.body.appendChild(oscilloscopeCanvas = new oscilloscopeCanvas(audioContext = getAudioContext(media, ['source'])));
+        // document.body.appendChild(oscilloscopeSvg = new oscilloscopeSvg(audioContext = getAudioContext(media, ['source'])));
       }
     }
 
@@ -132,54 +132,75 @@
       var analyzerL = audioContext.createAnalyser();
       analyzerL.fftSize = fftSize;
       analyzerL.smoothingTimeConstant = 0;
+
       var waveL = new Float32Array(analyzerL.fftSize);
+      // var waveL = new Uint8Array(analyzerL.fftSize);
+
       splitter.connect(analyzerL, 0);
 
       var analyzerR = audioContext.createAnalyser();
       analyzerR.fftSize = fftSize;
       analyzerR.smoothingTimeConstant = 0;
+
       var waveR = new Float32Array(analyzerR.fftSize);
+      // var waveR = new Uint8Array(analyzerR.fftSize);
+
       splitter.connect(analyzerR, 1);
 
       var draw = function () {
         analyzerL.getFloatTimeDomainData(waveL);
         analyzerR.getFloatTimeDomainData(waveR);
 
+        // analyzerL.getByteTimeDomainData(waveL);
+        // analyzerR.getByteTimeDomainData(waveR);
+
+      
+
         ctx.fillStyle = backgroundColor;
         ctx.fillRect(0, 0, width, height);
         ctx.fillStyle = dotColor;
 
-        {
-          ctx.strokeStyle = gridColor;
-          for (var i = -1; i <= 1; i += 0.25) {
-            ctx.beginPath();
-            ctx.moveTo(i * zoom + width * 0.5, -1 * zoom + height * 0.5);
-            ctx.lineTo(i * zoom + width * 0.5, 1 * zoom + height * 0.5);
-            ctx.moveTo(-1 * zoom + width * 0.5, i * zoom + height * 0.5);
-            ctx.lineTo(1 * zoom + width * 0.5, i * zoom + height * 0.5);
-            ctx.stroke();
-          }
-          for (var i = 0; i < 4; i++) {
-            ctx.beginPath();
-            ctx.moveTo(0 * zoom + width * 0.5, -1 * zoom + height * 0.5);
-            ctx.lineTo(0 * zoom + width * 0.5, 1 * zoom + height * 0.5);
-            ctx.moveTo(-1 * zoom + width * 0.5, 0 * zoom + height * 0.5);
-            ctx.lineTo(1 * zoom + width * 0.5, 0 * zoom + height * 0.5);
-            ctx.stroke();
-          }
-        } {
-          ctx.strokeStyle = lineColor;
+        ctx.strokeStyle = gridColor;
+        for (var i = -1; i <= 1; i += 0.25) {
           ctx.beginPath();
-          ctx.moveTo(-waveL[0] * zoom + width * 0.5, waveR[0] * zoom + height * 0.5);
-          for (var i = 1; i < fftSize; i++) {
-            ctx.lineTo(-waveL[i] * zoom + width * 0.5, waveR[i] * zoom + height * 0.5);
-          }
+          ctx.moveTo(i * zoom + width * 0.5, -1 * zoom + height * 0.5);
+          ctx.lineTo(i * zoom + width * 0.5, 1 * zoom + height * 0.5);
+          ctx.moveTo(-1 * zoom + width * 0.5, i * zoom + height * 0.5);
+          ctx.lineTo(1 * zoom + width * 0.5, i * zoom + height * 0.5);
           ctx.stroke();
-
-          for (var i = 0; i < fftSize; i++) {
-            ctx.fillRect(-waveL[i] * zoom + width * 0.5 - 1, waveR[i] * zoom + height * 0.5 - 1, 3, 3);
-          }
         }
+        for (var i = 0; i < 4; i++) {
+          ctx.beginPath();
+          ctx.moveTo(0 * zoom + width * 0.5, -1 * zoom + height * 0.5);
+          ctx.lineTo(0 * zoom + width * 0.5, 1 * zoom + height * 0.5);
+          ctx.moveTo(-1 * zoom + width * 0.5, 0 * zoom + height * 0.5);
+          ctx.lineTo(1 * zoom + width * 0.5, 0 * zoom + height * 0.5);
+          ctx.stroke();
+        }
+    
+        ctx.strokeStyle = lineColor;
+        ctx.beginPath();
+
+
+        function point(index) {
+          let obj = {
+            x: -waveL[index] * zoom + width * 0.5,
+            y: waveR[index] * zoom + height * 0.5,
+          }
+          // console.log(obj)
+          return obj
+        }
+
+        ctx.moveTo(point(0).x,point(0).y);
+        for (var i = 1; i < fftSize; i++) {
+          ctx.lineTo(point(i).x,point(i).y);
+        }
+        ctx.stroke();
+
+        for (var i = 0; i < fftSize; i++) {
+          ctx.fillRect(point(i).x - 1, point(i).y - 1, 3, 3);
+        }
+        
       };
 
       var anime = function () {
