@@ -4,6 +4,10 @@ body {
   background: #ffeff5;
 }
 
+input {
+  display: none;
+}
+
 .container {
 
   position: absolute;
@@ -32,9 +36,10 @@ body {
   border-radius: 50%;
   background: url("./music/RADIANT.jpg") center repeat;
   background-size: cover;
+  cursor: pointer;
 
   animation: turn;
-  animation-duration: 1s;
+  animation-duration: 2.5s;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
   animation-play-state: paused;
@@ -99,15 +104,22 @@ body {
   transform: translate(-50%, -50%);
   width: 398px;
   height: 74px;
-  border-radius: 14px;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
   background: #FFF8FA;
   transition: all 1s;
 }
 
 .up {
-  transform: translate(-50%, -160%);
+  transform: translate(-50%, -165%);
 }
 
+
+.progress {
+  width: 215px;
+  height: 4px;
+  background: #EBECEE;
+}
 
 
 
