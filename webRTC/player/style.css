@@ -34,7 +34,8 @@ input {
   width: 112px;
   height: 112px;
   border-radius: 50%;
-  background: url("./music/RADIANT.jpg") center repeat;
+  background: #000;
+  /* background: url("./music/RADIANT.jpg") center repeat; */
   background-size: cover;
   cursor: pointer;
 
@@ -83,7 +84,6 @@ input {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-
   color: #DEE0E4;
 }
 
@@ -96,6 +96,16 @@ input {
   border-radius: 10px;
   color: #fff;
 }
+
+.btn>svg {
+  width: 28px;
+  height: 28px;
+}
+
+#stop {
+  display: none;
+}
+
 
 .msg {
   position: absolute;
@@ -110,18 +120,31 @@ input {
   transition: all 1s;
 }
 
+.detail {
+  width: 60%;
+  margin: auto;
+  margin-right: 0px;
+  margin-top: 15px;
+}
+
 .up {
   transform: translate(-50%, -165%);
 }
 
-
-.progress {
+progress {
   width: 215px;
   height: 4px;
-  background: #EBECEE;
+  border-radius: 1em;
+  overflow: hidden;
 }
 
+::-webkit-progress-value {
+  background-color: #FF8EAB;
+}
 
+::-webkit-progress-bar {
+  background-color: #EBECEE;
+}
 
 /* .down {
   transform: translate(-50%, -50%);
