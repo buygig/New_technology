@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .box {
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: conic-gradient(#59bbb0, #59bbb0 65%, #f7f9fa 65%, #f7f9fa 75%, #59bbb0 75%, #59bbb0);
+    }
+
+    .box::before {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      -webkit-mask: radial-gradient(transparent, transparent 50%, #000 51%, #000 0);
+      background: conic-gradient(#17b5de, #17b5de 45%, #f7f9fa 45%, #f7f9fa 75%, #17b5de 75%, #17b5de);
+    }
+
+    .box::after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 10px solid #fff;
+      background: #cef2f2;
+    }
+
+    #canvas {
+      width: 1000px;
+      height: 800px;
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <div class="box"></div> -->
+
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const ctx = document.querySelector('#canvas').getContext('2d');
+
+    let WIDTH = 1000,
+      HEIGHT = 800,
+      R1 = 60,
+      R2 = 50;
+
+    canvas.width = WIDTH;
+    canvas.height = HEIGHT;
+
+    function drawRing(R1, R2, arc = Math.PI * 2, strokeColor = '#6cf') {
+      ctx.save();
+      ctx.lineWidth = 20;
+      ctx.strokeStyle = strokeColor;
+      ctx.beginPath();
+      ctx.arc(WIDTH / 2, HEIGHT / 2, (R1 + R2) / 2, 0, arc);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    drawRing(R1, R2, Math.PI * 2, '#f7f9fa');
+    drawRing(R1, R2, Math.PI * (4 / 4));
+    drawRing(90, 80, Math.PI * 2, '#f7f9fa');
+    drawRing(90, 80, Math.PI * (4 / 4));
+    drawRing(120, 110, Math.PI * 2, '#f7f9fa');
+    drawRing(120, 110, Math.PI * (4 / 4));
+
+  </script>
+</body>
+
+</html>

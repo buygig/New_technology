@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    html,
+    boyd {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+
+    .box {
+      width: 202px;
+      height: 202px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transform-style: preserve-3d;
+      /* perspective: 200px; */
+    }
+
+    .pie {
+      height: 100%;
+      border: 1px solid #000;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      position: relative;
+      transform: rotateX(10deg);
+    }
+
+    .pie::before,
+    .pie::after {
+      content: "";
+      display: block;
+      width: 200px;
+      height: 200px;
+      border: 1px solid #000;
+      position: absolute;
+    }
+
+    .pie::before {
+      transform: rotate3d(0, 1, 0, 60deg);
+    }
+
+    .pie::after {
+      transform: rotate3d(0, 1, 0, -60deg);
+    }
+
+    .top,
+    .bottom {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 1px solid black;
+      transform: rotate3d(1, 0, 0, 60deg);
+      position: absolute;
+    }
+
+    .top {
+      top: -100px;
+    }
+
+    .bottom {
+      bottom: -100px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div class="pie">
+      <div class="top"></div>
+      <div class="bottom"></div>
+    </div>
+  </div>
+</body>
+
+</html>

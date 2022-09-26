@@ -59,10 +59,19 @@ play.addEventListener('click', () => {
     timer = setInterval(() => {
       progress.setAttribute('value', audioContext.currentTime)
     }, 500)
+
+    // var anime = function () {
+    //   progress.setAttribute('value', audioContext.currentTime)
+    //   requestAnimationFrame(anime);
+    // };
+    // anime();
+
     playTag = true;
     msg.classList.add('up')
     record.style["animation-play-state"] = "running";
     svgPlay.style.display = 'none';
     svgStop.style.display = 'block';
   }
+
+
 })
