@@ -153,8 +153,6 @@
             }
           }
 
-
-
           this.target.style.transform = `translateX(${dx}px)`;
           obj.dom.style.transform = `translateX(${obj.pos + dx}px)`;
 
@@ -165,13 +163,17 @@
           }
           this.startDrag = false;
         });
-
       }
     }
 
     new Drag(left).eventListen(() => {
       let dom = document.querySelector('.shot')
-      let pos = Number(dom.style.transform.replace(/[(translateX/()]|[)]|[(px)]/g, ""))
+      let pos = null
+      if (window.CSS && CSS.number) {
+        pos = dom.attributeStyleMap.get('transform')[0].x.value
+      } else {
+        pos = Number(dom.style.transform.replace(/[(translateX/()]|[)]|[(px)]/g, ""))
+      }
       return {
         dom,
         pos
@@ -179,7 +181,12 @@
     })
     new Drag(right).eventListen(() => {
       let dom = document.querySelector('.loss')
-      let pos = Number(dom.style.transform.replace(/[(translateX/()]|[)]|[(px)]/g, ""))
+      let pos = null
+      if (window.CSS && CSS.number) {
+        pos = dom.attributeStyleMap.get('transform')[0].x.value
+      } else {
+        pos = Number(dom.style.transform.replace(/[(translateX/()]|[)]|[(px)]/g, ""))
+      }
       return {
         dom,
         pos
