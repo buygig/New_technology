@@ -11,36 +11,71 @@ const msg = document.querySelector('.msg');
 const progress = document.querySelector('progress')
 const title = document.querySelector('.title');
 
-const fileReader = new FileReader();
 const audioContext = new AudioContext();
-
 
 let file = null;
 record.addEventListener('click', () => {
   input.click();
-  input.addEventListener("change", e => {
+  input.addEventListener("change", () => {
     file = input.files[0];
     let html = `<span>${file.name}</span>`;
     title.innerHTML = html;
-    playAudio(file).start();
-    audioContext.suspend();
+    loadFile(file)
+    readAsArrayBuffer(file).then(res => {
+      playAudio(res).start();
+    })
   })
 })
 
+function readAsArrayBuffer(file) {
+  let reader = new FileReader();
+  reader.readAsArrayBuffer(file);
+  return new Promise((resolve, reject) => {
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = reject;
+  });
+}
+
+function loadFile(file) {
+  let url = file.urn || file.name;
+  ID3.loadTags(url, function () {
+    showTags(url);
+  }, {
+    tags: ["picture"],
+    dataReader: ID3.FileAPIReader(file)
+  });
+}
+
+function showTags(url) {
+  let tags = ID3.getAllTags(url);
+  let image = tags.picture;
+
+  if (image) {
+    let base64String = "";
+    for (let i = 0; i < image.data.length; i++) {
+      base64String += String.fromCharCode(image.data[i]);
+    }
+    let base64 = "data:" + image.format + ";base64," +
+      window.btoa(base64String);
+    record.style.backgroundImage = `url(${base64})`;
+  } else {
+    record.style.background = "#000";
+  }
+}
+
 let currentTime = null;
-function playAudio(file) {
+function playAudio(fileResult) {
+  audioContext.suspend();
   const source = audioContext.createBufferSource();
-  fileReader.readAsArrayBuffer(file);
-  fileReader.onload = async () => {
-    const result = await audioContext.decodeAudioData(fileReader.result);
+  audioContext.decodeAudioData(fileResult).then(result => {
     source.buffer = result;
     source.connect(audioContext.destination);
     progress.setAttribute('max', source.buffer.duration)
-  }
+  });
   return source;
 };
-
-
 
 let playTag = false;
 play.addEventListener('click', () => {

@@ -29,7 +29,68 @@
 
   <script>
     const chart = document.querySelector('.line-chart');
-    chart.style.setProperty('--points', JSON.stringify([0.2, 0.8, 0.5, 0.1, 0.9]));
+    let saveArr = []
+    setInterval(() => {
+      let arr = []
+      for (let i = 0; i < 10; i++) {
+        arr.push(Math.random().toFixed(1) * 1)
+      }
+      console.log(saveArr, arr, 6666)
+      amimation(saveArr, arr)
+      saveArr = arr
+    }, 2000)
+
+
+    // function amimation(arr, saveArr) {
+    //   let startTime;
+    //   const duration = 50;
+    //   const step = (currentTime) => {
+    //     !startTime && (startTime = currentTime);
+    //     const timeElapsed = currentTime - startTime;
+    //     const progress = Math.min(timeElapsed / duration, 1);
+    //     const draw = () => {
+    //       for (let i = 0; i < arr.length; i++) {
+    //         let gap = arr[i] - saveArr[i]
+    //         if (gap > 0) {
+    //           arr[i] -=
+    //         } else {
+    //           arr[i]
+    //         }
+    //       }
+    //       chart.style.setProperty('--points', JSON.stringify(arr));
+    //     }
+    //     draw();
+    //     if (progress < 1) {
+    //       requestAnimationFrame(step);
+    //     }
+    //   }
+    //   requestAnimationFrame(step)
+    // }
+
+    function amimation(arr, saveArr) {
+      let map = []
+      let nums = [...arr]
+      let gaps = []
+      for (let j = 0; j < arr.length; j++) {
+        gaps.push(arr[j] - saveArr[j])
+      }
+      for (let i = 0; i < 10; i++) {
+        let arr = []
+        for (let j = 0; j < nums.length; j++) {
+          nums[j] -= gaps[j] / 10
+        }
+        arr = [...nums]
+        map.push(arr)
+      }
+      for (let i = 0; i < map.length; i++) {
+        setTimeout(function timer() {
+          chart.style.setProperty('--points', JSON.stringify(map[i]));
+        }, i * 100);
+      }
+    }
+
+
+
   </script>
 </body>
 

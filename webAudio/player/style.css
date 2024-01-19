@@ -35,14 +35,13 @@ input {
   height: 112px;
   border-radius: 50%;
   background: #000;
-  /* background: url("./music/RADIANT.jpg") center repeat; */
+  background-position: center;
+  background-repeat: no-repeat;
   background-size: cover;
   cursor: pointer;
 
   animation: turn;
-  animation-duration: 2.5s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
+  animation-duration: 3s linear infinite;
   animation-play-state: paused;
 }
 
@@ -125,6 +124,12 @@ input {
   margin: auto;
   margin-right: 0px;
   margin-top: 15px;
+
+  & .title {
+    width: 215px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 }
 
 .up {
@@ -140,6 +145,7 @@ progress {
 
 ::-webkit-progress-value {
   background-color: #FF8EAB;
+  border-radius: 1em;
 }
 
 ::-webkit-progress-bar {
