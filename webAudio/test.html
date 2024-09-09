@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Web Audio API: AudioBuffer</title>
+</head>
+
+<body>
+  <h1>Web Audio API: AudioBuffer</h1>
+  <button>Make white noise</button>
+</body>
+<script>
+  const button = document.querySelector("button");
+
+  let audioCtx = new AudioContext();
+
+  // Stereo
+  let channels = 2;
+
+  function init() {
+    audioCtx = new AudioContext();
+  }
+
+  button.onclick = () => {
+
+    const frameCount = audioCtx.sampleRate * 2.0;
+
+    const buffer = new AudioBuffer({
+      numberOfChannels: channels,
+      length: frameCount,
+      sampleRate: audioCtx.sampleRate,
+    });
+
+    for (let channel = 0; channel < channels; channel++) {
+      const nowBuffering = buffer.getChannelData(channel);
+      for (let i = 0; i < frameCount; i++) {
+        nowBuffering[i] = Math.random() * 2 - 1;
+      }
+    }
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioCtx.destination);
+    source.start();
+    source.onended = () => {
+      console.log("White noise finished.");
+    };
+  };
+</script>
+
+</html>

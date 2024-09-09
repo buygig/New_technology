@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 创建Canvas元素和上下文
+    const canvas = document.createElement('canvas');
+    canvas.width = 400;
+    canvas.height = 300;
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+
+    // 创建Z缓冲区
+    const zBuffer = new Array(canvas.width * canvas.height).fill(Number.MAX_VALUE);
+
+    // 绘制三角形
+    function drawTriangleWithBarycentric(x1, y1, x2, y2, x3, y3, color) {
+      // 计算三角形的边界框
+      const minX = Math.min(x1, x2, x3);
+      const minY = Math.min(y1, y2, y3);
+      const maxX = Math.max(x1, x2, x3);
+      const maxY = Math.max(y1, y2, y3);
+
+      // 遍历边界框内的每个像素
+      for (let x = minX; x <= maxX; x++) {
+        for (let y = minY; y <= maxY; y++) {
+          // 计算像素点到三角形各个顶点的重心坐标
+          const barycentric = calculateBarycentricCoordinates(x, y, x1, y1, x2, y2, x3, y3);
+
+          // 如果重心坐标合法（即在三角形内部），则绘制像素
+          if (barycentric.x >= 0 && barycentric.y >= 0 && barycentric.z >= 0) {
+            // 计算像素的深度值（Z值）和颜色
+            const z = 0;
+
+            // 检查深度值是否小于Z缓冲区中相应位置的值
+            const index = y * canvas.width + x;
+            if (z < zBuffer[index]) {
+              // 更新Z缓冲区和像素颜色
+              zBuffer[index] = z;
+              setPixelColor(x, y, color);
+            }
+          }
+        }
+      }
+    }
+
+    // 计算重心坐标
+    function calculateBarycentricCoordinates(x, y, x1, y1, x2, y2, x3, y3) {
+      // 计算三角形的面积
+      const triangleArea = ((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1));
+      // 计算三角形内各个顶点到指定点的面积比例
+      const alpha = ((x2 - x) * (y3 - y) - (x3 - x) * (y2 - y)) / triangleArea;
+      const beta = ((x3 - x) * (y1 - y) - (x1 - x) * (y3 - y)) / triangleArea;
+      const gamma = ((x1 - x) * (y2 - y) - (x2 - x) * (y1 - y)) / triangleArea;
+      return { x: alpha, y: beta, z: gamma };
+    }
+
+    // 示例绘制
+    drawTriangleWithBarycentric(100, 100, 200, 50, 300, 200, 'red');
+  </script>
+</body>
+
+</html>

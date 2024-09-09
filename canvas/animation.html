@@ -14,25 +14,44 @@
     let canvas = document.getElementById("canvas");
     let ctx = canvas.getContext("2d");
 
+    function animation(options, callback) {
+      let { startTime, duration } = options
+      const step = (currentTime) => {
+        // 第一帧绘制时记录下开始的时间
+        !startTime && (startTime = currentTime);
+        // 已经过去的时间
+        const timeElapsed = currentTime - startTime;
+        // 动画执行的进度
+        const progress = Math.min(timeElapsed / duration, 1);
+        callback(progress);
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          console.log('动画执行完毕')
+        }
+      }
+      requestAnimationFrame(step)
+    }
+
     function path(ctx) {
       ctx.strokeStyle = 'rgba(81, 160, 255, 1)';
       ctx.lineWidth = 3;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
       ctx.beginPath();
-
-      ctx.moveTo(100, 100);
-      ctx.lineTo(700, 700);
+      ctx.moveTo(10, 10);
+      ctx.lineTo(10, 50);
       ctx.stroke();
     }
 
     function drawPath(ctx) {
-      ctx.strokeStyle = 'rgba(81, 160, 255, 1)';
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 3;
       ctx.lineJoin = 'round';
 
-      const startX = 100;
-      const startY = 100;
-      const endX = 700;
-      const endY = 700;
+      const startX = 20;
+      const startY = 10;
+      const endX = 50;
+      const endY = 50;
 
       let prevX = startX;
       let prevY = startY;
@@ -43,30 +62,61 @@
       let startTime;
       const duration = 1000;
 
-      const step = (currentTime) => {
-        !startTime && (startTime = currentTime);
-        const timeElapsed = currentTime - startTime;
-        const progress = Math.min(timeElapsed / duration, 1);
-        const draw = () => {
-          ctx.beginPath();
-          ctx.moveTo(prevX, prevY);
-          prevX = nextX = startX + (endX - startX) * progress;
-          prevY = nextY = startY + (endY - startY) * progress;
-          ctx.lineTo(nextX, nextY);
-          ctx.stroke();
-        }
-        draw();
-        if (progress < 1) {
-          requestAnimationFrame(step);
-        } else {
-          console.log('动画执行完毕')
-        }
-      }
-      requestAnimationFrame(step)
+      animation({ startTime, duration }, (progress) => {
+        ctx.beginPath();
+        ctx.moveTo(prevX, prevY);
+        ctx.strokeStyle = 'rgba(81, 160, 255, 1)';
+        prevX = nextX = startX + (endX - startX) * progress;
+        prevY = nextY = startY + (endY - startY) * progress;
+        ctx.lineTo(nextX, nextY);
+        ctx.stroke();
+      })
     }
 
-    // path(ctx)
+    function drawCircle(ctx) {
+      ctx.lineWidth = 3;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+
+      const center = {
+        x: 70,
+        y: 25
+      }
+
+      const radius = 25;
+
+      const startAngle = 0;
+      const endAngle = 2 * Math.PI;
+
+      let prevAngle = startAngle
+      let nextAngle
+      // 第一帧执行的时间
+      let startTime;
+      // 期望动画持续的时间
+      const duration = 900
+      animation({ startTime, duration }, (progress) => {
+        // 创建新的路径
+        ctx.beginPath()
+        // 计算这一帧中圆弧应该到达的角度
+        nextAngle = startAngle + (endAngle - startAngle) * progress
+        // 创建一段圆弧
+        ctx.arc(center.x, center.y, radius, prevAngle, nextAngle, false)
+        // 设置渐变的颜色
+        ctx.strokeStyle = `
+          rgba(${81 + 171 * Math.abs(1 - progress * 2)}, 
+          ${160 - 160 * Math.abs(1 - progress * 2)}, 
+          ${255},1)
+        `
+        // 把这一帧的圆弧绘制出来
+        ctx.stroke()
+        //将prevAngle更新为这一帧中的nextAngle给下一帧使用
+        prevAngle = nextAngle
+      })
+    }
+
+    path(ctx)
     drawPath(ctx)
+    drawCircle(ctx)
   </script>
 </body>
 
