@@ -91,7 +91,7 @@ void mainImage(out vec4 o, vec2 u)
 
 
 /* // reduction by FabriceNeyret2: 303
-                                                 // draw segment [a,b]
+    // draw segment [a,b]
 #define L ; o+=3e-3/length(clamp(dot(u-a,v=b-a)/dot(v,v),0.,1.)*v-u+a);
 #define P(A,B) b=c=vec2(A,1)/(4.+B) L b=a*I L a=c*I L a=c;
 
